@@ -1,42 +1,44 @@
-// Copy over the variables from the previous activity
-let name='Nawaz khan'
+// Use d3 to read the JSON file.
+// The data from the JSON file is arbitrarily named importedData as the argument.
+d3.json("data/data.json").then((importedData) => {
+  // console.log(importedData);
+  var data = importedData;
 
-// Create another variable called 'title' using a string template to say "<your name>'s First Plotly Chart"
+  // Sort the data array by using the greekSearchResults value.
+  data.sort(function(a, b) {
+    return parseFloat(b.greekSearchResults) - parseFloat(a.greekSearchResults);
+  });
 
-let title=`${name}'s First plotly chart`
+  // Slice the first 10 objects for plotting.
+  data = data.slice(0, 10);
 
-// Create an array called 'books' of your favorite book titles
+  // Reverse the array because of the Plotly defaults.
+  data = data.reverse();
 
-let books= ["book1", "book2","book3", "book4"]
+  // Trace1 for the Greek data.
+  var trace1 = {
+    x: data.map(row => row.greekSearchResults),
+    y: data.map(row => row.greekName),
+    text: data.map(row => row.greekName),
+    name: "Greek",
+    type: "bar",
+    orientation: "h"
+  };
 
-// Create another array called 'timesRead' of how many times you've read each respective book
+  // Data
+  var chartData = [trace1];
 
-let timesRead=[100,200,50,25]
+  // Apply the group bar mode to the layout.
+  var layout = {
+    title: "Greek gods search results",
+    margin: {
+      l: 100,
+      r: 100,
+      t: 100,
+      b: 100
+    }
+  };
 
-// Create a JavaScript object called 'myData' with four key-value pairs
-// 1. name
-// 2. favoriteBooks
-// 3. timesRead
-// 4. age
-
-let myData= {
-	name: name,
-	favoriteBooks: books,
-	timesRead: timesRead,
-	age: 47
-}
-// Assign `x` and `y` values for the Plotly trace object
-let trace1 = {
-  x: books,
-  y: timesRead ,
-  type: 'bar'
-};
-
-// Leave the code below unchanged
-let data = [trace1];
-
-let layout = {
-  title: title
-};
-
-Plotly.newPlot("plot", data, layout);
+  // Render the plot to the div tag with the id of "plot".
+  Plotly.newPlot("plot", chartData, layout);
+});
